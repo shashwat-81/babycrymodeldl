@@ -1,0 +1,49 @@
+{
+  "test_accuracy": 68.84816753926701,
+  "test_report": {
+    "belly pain": {
+      "precision": 0.8278145695364238,
+      "recall": 0.8169934640522876,
+      "f1-score": 0.8223684210526315,
+      "support": 153.0
+    },
+    "cold_hot": {
+      "precision": 0.7987421383647799,
+      "recall": 0.8355263157894737,
+      "f1-score": 0.8167202572347267,
+      "support": 152.0
+    },
+    "discomfort": {
+      "precision": 0.6761363636363636,
+      "recall": 0.7777777777777778,
+      "f1-score": 0.723404255319149,
+      "support": 153.0
+    },
+    "hungry": {
+      "precision": 0.32075471698113206,
+      "recall": 0.2222222222222222,
+      "f1-score": 0.2625482625482625,
+      "support": 153.0
+    },
+    "tired": {
+      "precision": 0.7034883720930233,
+      "recall": 0.7908496732026143,
+      "f1-score": 0.7446153846153846,
+      "support": 153.0
+    },
+    "accuracy": 0.6884816753926701,
+    "macro avg": {
+      "precision": 0.6653872321223446,
+      "recall": 0.6886738906088751,
+      "f1-score": 0.6739313161540308,
+      "support": 764.0
+    },
+    "weighted avg": {
+      "precision": 0.6652126838157445,
+      "recall": 0.6884816753926701,
+      "f1-score": 0.6737444196342918,
+      "support": 764.0
+    }
+  },
+  "validation_accuracy": [
+    

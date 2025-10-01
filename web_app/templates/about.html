@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Baby Cry Classification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-baby"></i> Baby Cry Classifier
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/demo">Demo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="text-center mb-5">About Baby Cry Classification</h1>
+                
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3><i class="fas fa-lightbulb text-warning"></i> Project Overview</h3>
+                        <p>
+                            This Baby Cry Classification system uses advanced deep learning techniques to automatically 
+                            identify the reason behind a baby's cry. The system can classify cries into 5 categories:
+                        </p>
+                        <ul>
+                            <li><strong>Belly Pain:</strong> Discomfort due to gas, colic, or digestive issues</li>
+                            <li><strong>Cold/Hot:</strong> Temperature discomfort</li>
+                            <li><strong>Discomfort:</strong> General discomfort or irritation</li>
+                            <li><strong>Hungry:</strong> Need for feeding</li>
+                            <li><strong>Tired:</strong> Need for sleep or rest</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3><i class="fas fa-brain text-primary"></i> Model Architecture</h3>
+                        <p>Our hybrid model combines multiple state-of-the-art techniques:</p>
+                        
+                        <h5>1. Wav2Vec2 Feature Extraction</h5>
+                        <p>Pre-trained Wav2Vec2 model extracts high-level audio representations from raw audio waveforms.</p>
+                        
+                        <h5>2. Bidirectional LSTM</h5>
+                        <p>BiLSTM processes sequential audio features to capture temporal dependencies in both forward and backward directions.</p>
+                        
+                        <h5>3. Attention Mechanism</h5>
+                        <p>Attention layer focuses on the most relevant parts of the audio sequence for classification.</p>
+                        
+                        <h5>4. CNN for Spectrograms</h5>
+                        <p>Convolutional Neural Network processes mel-spectrograms to extract spatial-frequency features.</p>
+                        
+                        <h5>5. Traditional Audio Features</h5>
+                        <ul>
+                            <li><strong>MFCC:</strong> Mel-frequency cepstral coefficients</li>
+                            <li><strong>Spectral Features:</strong> Spectral centroid, rolloff, bandwidth</li>
+                            <li><strong>Rhythm Features:</strong> Tempo and onset strength</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3><i class="fas fa-database text-info"></i> Data Processing</h3>
+                        
+                        <h5>Dataset</h5>
+                        <p>The model is trained on baby cry audio data from Kaggle, containing recordings across 5 cry types.</p>
+                        
+                        <h5>Data Balancing</h5>
+                        <p>We use SMOTE (Synthetic Minority Oversampling Technique) to address class imbalance in the dataset.</p>
+                        
+                        <h5>Data Augmentation</h5>
+                        <p>Audio augmentation techniques include:</p>
+                        <ul>
+                            <li>Gaussian noise addition</li>
+                            <li>Time stretching</li>
+                            <li>Pitch shifting</li>
+                            <li>Time shifting</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3><i class="fas fa-cogs text-secondary"></i> Technical Specifications</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Framework</h6>
+                                <p>PyTorch</p>
+                                
+                                <h6>Web Framework</h6>
+                                <p>Flask</p>
+                                
+                                <h6>Audio Processing</h6>
+                                <p>Librosa, Soundfile</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Model Size</h6>
+                                <p>~50M parameters</p>
+                                
+                                <h6>Input Format</h6>
+                                <p>16kHz, 5-second audio clips</p>
+                                
+                                <h6>Supported Formats</h6>
+                                <p>WAV, MP3, FLAC, M4A</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3><i class="fas fa-chart-line text-success"></i> Performance</h3>
+                        <p>
+                            The model achieves high accuracy through ensemble learning and multi-modal feature fusion. 
+                            Performance metrics include precision, recall, and F1-score for each cry type.
+                        </p>
+                        
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle"></i> Note</h6>
+                            <p class="mb-0">
+                                This system is designed for research and educational purposes. 
+                                For medical concerns about your baby, always consult healthcare professionals.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h3><i class="fas fa-code text-dark"></i> Implementation</h3>
+                        <p>The complete implementation includes:</p>
+                        <ul>
+                            <li>Data preprocessing and feature extraction</li>
+                            <li>Hybrid deep learning model architecture</li>
+                            <li>Training pipeline with data balancing</li>
+                            <li>Web interface for real-time prediction</li>
+                            <li>Visualization of results and attention weights</li>
+                        </ul>
+                        
+                        <p>
+                            The system demonstrates the power of combining multiple deep learning techniques 
+                            for complex audio classification tasks.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p>&copy; 2024 Baby Cry Classification System. Powered by Deep Learning.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

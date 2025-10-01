@@ -1,0 +1,36 @@
+# Baby Cry Test Dataset - File Listing
+
+## BELLY_PAIN (5 files)
+- belly_pain_sample_01.wav
+- belly_pain_sample_02.wav
+- belly_pain_sample_03.wav
+- belly_pain_sample_04.wav
+- belly_pain_sample_05.wav
+
+## COLD_HOT (5 files)
+- cold_hot_sample_01.wav
+- cold_hot_sample_02.wav
+- cold_hot_sample_03.wav
+- cold_hot_sample_04.wav
+- cold_hot_sample_05.wav
+
+## DISCOMFORT (5 files)
+- discomfort_sample_01.wav
+- discomfort_sample_02.wav
+- discomfort_sample_03.wav
+- discomfort_sample_04.wav
+- discomfort_sample_05.wav
+
+## HUNGRY (5 files)
+- hungry_sample_01.wav
+- hungry_sample_02.wav
+- hungry_sample_03.wav
+- hungry_sample_04.wav
+- hungry_sample_05.wav
+
+## TIRED (5 files)
+- tired_sample_01.wav
+- tired_sample_02.wav
+- tired_sample_03.wav
+- tired_sample_04.wav
+- tired_sample_05.wav

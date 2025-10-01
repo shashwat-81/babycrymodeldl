@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Cry Classification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+        }
+        .feature-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        .upload-area {
+            border: 3px dashed #dee2e6;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #e3f2fd;
+        }
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: #e3f2fd;
+        }
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+        }
+        .probability-bar {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .probability-fill {
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            height: 30px;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        .loading-spinner {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-baby"></i> Baby Cry Classifier
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/demo">Demo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">
+                <i class="fas fa-brain"></i> AI-Powered Baby Cry Classification
+            </h1>
+            <p class="lead mb-5">
+                Advanced deep learning model combining BiLSTM, Wav2Vec, and attention mechanisms 
+                to classify baby cries into 5 categories: Belly Pain, Cold/Hot, Discomfort, Hungry, and Tired.
+            </p>
+            <a href="#upload" class="btn btn-light btn-lg">
+                <i class="fas fa-upload"></i> Try It Now
+            </a>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-microchip fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Hybrid AI Model</h5>
+                            <p class="card-text">
+                                Combines BiLSTM, Wav2Vec2, and attention mechanisms for superior accuracy
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Multi-Feature Analysis</h5>
+                            <p class="card-text">
+                                Analyzes MFCC, spectrograms, spectral, and rhythm features for comprehensive understanding
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-balance-scale fa-3x text-warning mb-3"></i>
+                            <h5 class="card-title">Balanced Dataset</h5>
+                            <p class="card-text">
+                                Uses SMOTE and data augmentation to handle class imbalance effectively
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="upload" class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h2 class="text-center mb-5">Upload Baby Cry Audio</h2>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                        <h4>Drag & Drop Audio File Here</h4>
+                        <p class="text-muted">or click to browse</p>
+                        <input type="file" id="audioFile" accept=".wav,.mp3,.flac,.m4a" style="display: none;">
+                        <button class="btn btn-primary mt-3" onclick="document.getElementById('audioFile').click()">
+                            <i class="fas fa-folder-open"></i> Choose File
+                        </button>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <small class="text-muted">Supported formats: WAV, MP3, FLAC, M4A (Max 16MB)</small>
+                    </div>
+                    
+                    <div class="loading-spinner text-center mt-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Processing...</span>
+                        </div>
+                        <p class="mt-2">Analyzing audio...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="results" class="py-5" style="display: none;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card result-card">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">
+                                <i class="fas fa-chart-pie"></i> Classification Results
+                            </h3>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <h4>Predicted Class</h4>
+                                        <div class="alert alert-light" id="predictedClass">
+                                            <i class="fas fa-baby"></i> <span id="className"></span>
+                                        </div>
+                                        <div class="mb-2">
+                                            <strong>Confidence: <span id="confidence"></span>%</strong>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <h5>All Probabilities</h5>
+                                        <div id="probabilityBars"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="text-center">
+                                        <h5>Probability Chart</h5>
+                                        <img id="chartImage" class="img-fluid rounded" style="max-height: 400px;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-light py-4">
+        <div class="container text-center">
+            <p>&copy; 2024 Baby Cry Classification System. Powered by Deep Learning.</p>
+            <div class="mt-2">
+                <i class="fas fa-code"></i> Built with PyTorch, Flask, and Bootstrap
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('audioFile');
+        const loadingSpinner = document.querySelector('.loading-spinner');
+        const resultsSection = document.getElementById('results');
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // Handle file upload and prediction
+        function handleFile(file) {
+            // Validate file type
+            const allowedTypes = ['audio/wav', 'audio/mpeg', 'audio/flac', 'audio/mp4'];
+            if (!allowedTypes.includes(file.type) && !file.name.match(/\.(wav|mp3|flac|m4a)$/i)) {
+                alert('Please upload a valid audio file (WAV, MP3, FLAC, M4A)');
+                return;
+            }
+
+            // Validate file size (16MB)
+            if (file.size > 16 * 1024 * 1024) {
+                alert('File size too large. Maximum size is 16MB.');
+                return;
+            }
+
+            // Show loading
+            loadingSpinner.style.display = 'block';
+            resultsSection.style.display = 'none';
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Upload and predict
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingSpinner.style.display = 'none';
+                
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                loadingSpinner.style.display = 'none';
+                console.error('Error:', error);
+                alert('An error occurred while processing the file.');
+            });
+        }
+
+        // Display prediction results
+        function displayResults(data) {
+            document.getElementById('className').textContent = data.predicted_class;
+            document.getElementById('confidence').textContent = (data.confidence * 100).toFixed(1);
+            document.getElementById('chartImage').src = 'data:image/png;base64,' + data.chart;
+
+            // Create probability bars
+            const probabilityBars = document.getElementById('probabilityBars');
+            probabilityBars.innerHTML = '';
+
+            Object.entries(data.probabilities).forEach(([className, probability]) => {
+                const barHtml = `
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span><strong>${className}</strong></span>
+                            <span>${(probability * 100).toFixed(1)}%</span>
+                        </div>
+                        <div class="probability-bar">
+                            <div class="probability-fill" style="width: ${probability * 100}%"></div>
+                        </div>
+                    </div>
+                `;
+                probabilityBars.innerHTML += barHtml;
+            });
+
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
