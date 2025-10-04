@@ -1,332 +1,1009 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baby Cry Classification</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Baby Cry Intelligence Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .hero-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4338ca;
+            --secondary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        /* Header & Navigation */
+        .header {
+            background: var(--gradient-hero);
             color: white;
-            padding: 80px 0;
-        }
-        .feature-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        .feature-card:hover {
-            transform: translateY(-10px);
-        }
-        .upload-area {
-            border: 3px dashed #dee2e6;
-            border-radius: 15px;
-            padding: 60px 20px;
-            text-align: center;
-            background: #f8f9fa;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .upload-area:hover {
-            border-color: #667eea;
-            background: #e3f2fd;
-        }
-        .upload-area.dragover {
-            border-color: #667eea;
-            background: #e3f2fd;
-        }
-        .result-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px;
-        }
-        .probability-bar {
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
+            position: relative;
             overflow: hidden;
         }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='10' cy='10' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+        }
+
+        .nav-container {
+             width: 100%;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .hero-content {
+            padding: 3rem 0 4rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            margin-bottom: 2.5rem;
+            color: rgba(255, 255, 255, 0.9);
+             width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Main Content */
+        .main-container {
+             width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .card-subtitle {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--gray-300);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            background: var(--gray-50);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtitle {
+            color: var(--gray-500);
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .upload-button:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Status Chip */
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-chip.processing {
+            background: rgba(249, 115, 22, 0.1);
+            color: #ea580c;
+        }
+
+        .status-chip.ready {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+
+        .status-chip.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        /* Progress Circle */
+        .progress-section {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .progress-circle {
+            width: 150px;
+            height: 150px;
+            position: relative;
+        }
+
+        .progress-ring {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+
+        .progress-bg {
+            stroke: var(--gray-200);
+        }
+
+        .progress-fill {
+            stroke: var(--primary);
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .result-info h3 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray-500);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+        }
+
+        .insights {
+            list-style: none;
+            padding: 0;
+        }
+
+        .insights li {
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .insights li::before {
+            content: '•';
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+        }
+
+        /* Probability Bars */
+        .probability-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .probability-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .probability-label {
+            min-width: 100px;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .probability-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
         .probability-fill {
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
-            height: 30px;
-            border-radius: 10px;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
             transition: width 0.5s ease;
         }
-        .loading-spinner {
+
+        .probability-value {
+            min-width: 40px;
+            text-align: right;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(17, 24, 39, 0.5);
             display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .loading-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-xl);
+            text-align: center;
+            max-width: 300px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--gray-200);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.25rem;
+            margin-top: 1rem;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: bounce 1.4s ease-in-out infinite both;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .progress-section {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .hero-content {
+                padding: 2rem 0 3rem;
+            }
+            
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .probability-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+            
+            .probability-value {
+                text-align: left;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-baby"></i> Baby Cry Classifier
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/demo">Demo</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">About</a>
-                    </li>
-                </ul>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-card">
+            <div class="loading-spinner"></div>
+            <h3 style="margin-bottom: 0.5rem;">Analyzing Audio</h3>
+            <p style="color: var(--gray-500); margin: 0;">Processing your baby's cry pattern...</p>
+            <div class="loading-dots">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
             </div>
         </div>
-    </nav>
+    </div>
 
-    <section class="hero-section">
-        <div class="container text-center">
-            <h1 class="display-4 fw-bold mb-4">
-                <i class="fas fa-brain"></i> AI-Powered Baby Cry Classification
-            </h1>
-            <p class="lead mb-5">
-                Advanced deep learning model combining BiLSTM, Wav2Vec, and attention mechanisms 
-                to classify baby cries into 5 categories: Belly Pain, Cold/Hot, Discomfort, Hungry, and Tired.
-            </p>
-            <a href="#upload" class="btn btn-light btn-lg">
-                <i class="fas fa-upload"></i> Try It Now
-            </a>
-        </div>
-    </section>
-
-    <section class="py-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 mb-4">
-                    <div class="card feature-card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-microchip fa-3x text-primary mb-3"></i>
-                            <h5 class="card-title">Hybrid AI Model</h5>
-                            <p class="card-text">
-                                Combines BiLSTM, Wav2Vec2, and attention mechanisms for superior accuracy
-                            </p>
-                        </div>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <nav class="navbar">
+                <div class="brand">
+                    <div class="brand-icon">
+                        <i class="fas fa-brain" style="color: white;"></i>
                     </div>
+                    <span>Baby Cry Intelligence</span>
                 </div>
-                <div class="col-lg-4 mb-4">
-                    <div class="card feature-card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
-                            <h5 class="card-title">Multi-Feature Analysis</h5>
-                            <p class="card-text">
-                                Analyzes MFCC, spectrograms, spectral, and rhythm features for comprehensive understanding
-                            </p>
-                        </div>
+                <div class="nav-links">
+                    <a href="/" class="nav-link active">Dashboard</a>
+                    <a href="/about" class="nav-link">Model Insights</a>
+                </div>
+            </nav>
+            
+            <div class="hero-content">
+                <h1 class="hero-title">Smart Baby Cry Analysis</h1>
+                <p class="hero-subtitle">Advanced AI-powered cry pattern recognition to help you understand and respond to your baby's needs with confidence.</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="accuracyStat">--</div>
+                        <div class="stat-label">Accuracy Rate</div>
                     </div>
-                </div>
-                <div class="col-lg-4 mb-4">
-                    <div class="card feature-card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-balance-scale fa-3x text-warning mb-3"></i>
-                            <h5 class="card-title">Balanced Dataset</h5>
-                            <p class="card-text">
-                                Uses SMOTE and data augmentation to handle class imbalance effectively
-                            </p>
-                        </div>
+                    <div class="stat-card">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Cry Categories</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="latencyStat">--</div>
+                        <div class="stat-label">Analysis Time</div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </header>
 
-    <section id="upload" class="py-5 bg-light">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <h2 class="text-center mb-5">Upload Baby Cry Audio</h2>
-                    
-                    <div class="upload-area" id="uploadArea">
-                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
-                        <h4>Drag & Drop Audio File Here</h4>
-                        <p class="text-muted">or click to browse</p>
-                        <input type="file" id="audioFile" accept=".wav,.mp3,.flac,.m4a" style="display: none;">
-                        <button class="btn btn-primary mt-3" onclick="document.getElementById('audioFile').click()">
-                            <i class="fas fa-folder-open"></i> Choose File
-                        </button>
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Upload and Results Section -->
+        <div class="dashboard-grid">
+            <!-- Upload Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Upload Audio Recording</h2>
+                </div>
+                <p class="card-subtitle">Upload a clear recording of your baby's cry for instant analysis. Supported formats: WAV, MP3, FLAC, M4A</p>
+                
+                <div id="uploadZone" class="upload-zone">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3 class="upload-title">Drag & Drop Audio File</h3>
+                    <p class="upload-subtitle">Or click to browse your files</p>
+                    <button id="browseButton" class="upload-button">
+                        <i class="fas fa-folder-open" style="margin-right: 0.5rem;"></i>
+                        Choose File
+                    </button>
+                </div>
+                <input type="file" id="audioInput" hidden accept=".wav,.mp3,.flac,.m4a">
+            </div>
+
+            <!-- Results Card -->
+            <div class="card" id="resultsCard">
+                <div class="card-header">
+                    <h2 class="card-title">Analysis Results</h2>
+                    <span id="statusChip" class="status-chip processing" style="display: none;">Processing</span>
+                </div>
+                
+                <div class="progress-section">
+                    <div class="progress-circle">
+                        <svg class="progress-ring" viewBox="0 0 100 100">
+                            <circle class="progress-bg" cx="50" cy="50" r="45"></circle>
+                            <circle id="progressFill" class="progress-fill" cx="50" cy="50" r="45"></circle>
+                        </svg>
+                        <div id="progressText" class="progress-text">0%</div>
                     </div>
                     
-                    <div class="text-center mt-3">
-                        <small class="text-muted">Supported formats: WAV, MP3, FLAC, M4A (Max 16MB)</small>
-                    </div>
-                    
-                    <div class="loading-spinner text-center mt-4">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Processing...</span>
-                        </div>
-                        <p class="mt-2">Analyzing audio...</p>
+                    <div class="result-info">
+                        <h3>Detected Pattern</h3>
+                        <div id="resultValue" class="result-value">—</div>
+                        <ul id="insightsList" class="insights">
+                            <li>Upload an audio file to begin analysis</li>
+                        </ul>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <section id="results" class="py-5" style="display: none;">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="card result-card">
-                        <div class="card-body">
-                            <h3 class="card-title text-center mb-4">
-                                <i class="fas fa-chart-pie"></i> Classification Results
-                            </h3>
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-4">
-                                        <h4>Predicted Class</h4>
-                                        <div class="alert alert-light" id="predictedClass">
-                                            <i class="fas fa-baby"></i> <span id="className"></span>
-                                        </div>
-                                        <div class="mb-2">
-                                            <strong>Confidence: <span id="confidence"></span>%</strong>
-                                        </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <h5>All Probabilities</h5>
-                                        <div id="probabilityBars"></div>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <div class="text-center">
-                                        <h5>Probability Chart</h5>
-                                        <img id="chartImage" class="img-fluid rounded" style="max-height: 400px;">
-                                    </div>
-                                </div>
-                            </div>
+                <div class="probability-section">
+                    <h3>Confidence Distribution</h3>
+                    <div id="probabilityBars">
+                        <div style="text-align: center; color: var(--gray-500); padding: 2rem 0;">
+                            Awaiting audio upload for detailed analysis
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
 
-    <footer class="bg-dark text-light py-4">
-        <div class="container text-center">
-            <p>&copy; 2024 Baby Cry Classification System. Powered by Deep Learning.</p>
-            <div class="mt-2">
-                <i class="fas fa-code"></i> Built with PyTorch, Flask, and Bootstrap
+        <!-- Analytics Section -->
+        <div class="analytics-grid">
+            <!-- Historical Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Analysis History</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="historyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Pattern Distribution -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Pattern Distribution</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Tips & Insights -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Caregiving Tips</h2>
+                </div>
+                <div id="tipsContent">
+                    <div style="color: var(--gray-500); text-align: center; padding: 2rem 0;">
+                        Tips will appear here after audio analysis
+                    </div>
+                </div>
             </div>
         </div>
-    </footer>
+    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
     <script>
-        const uploadArea = document.getElementById('uploadArea');
-        const fileInput = document.getElementById('audioFile');
-        const loadingSpinner = document.querySelector('.loading-spinner');
-        const resultsSection = document.getElementById('results');
+        // DOM Elements
+        const uploadZone = document.getElementById('uploadZone');
+        const browseButton = document.getElementById('browseButton');
+        const audioInput = document.getElementById('audioInput');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const statusChip = document.getElementById('statusChip');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const resultValue = document.getElementById('resultValue');
+        const insightsList = document.getElementById('insightsList');
+        const probabilityBars = document.getElementById('probabilityBars');
+        const tipsContent = document.getElementById('tipsContent');
 
-        // Drag and drop functionality
-        uploadArea.addEventListener('dragover', (e) => {
+        // Charts
+        let historyChart, distributionChart;
+
+        // Insights mapping
+        const INSIGHTS = {
+            hungry: "Your baby is likely expressing hunger cues. Consider offering feeding or checking if it's been a while since the last meal.",
+            tired: "Signs indicate fatigue or overstimulation. Create a calm, dimly lit environment and consider sleep routines.",
+            discomfort: "General discomfort detected. Check diaper, clothing comfort, room temperature, or body positioning.",
+            "belly pain": "Possible digestive discomfort or gas. Try gentle tummy massage, burping, or bicycle leg movements.",
+            cold_hot: "Temperature-related discomfort. Adjust clothing layers or room temperature to ensure comfort."
+        };
+
+        // Tips mapping
+        const TIPS = {
+            hungry: [
+                "Try feeding even if it hasn't been long since the last meal",
+                "Check for proper latch during breastfeeding",
+                "Consider growth spurts which increase appetite",
+                "Monitor feeding patterns and durations"
+            ],
+            tired: [
+                "Reduce stimulation and dim the lights",
+                "Try gentle rocking or swaddling",
+                "Check for overtiredness signs like rubbing eyes",
+                "Establish consistent sleep routines"
+            ],
+            discomfort: [
+                "Check diaper and change if needed",
+                "Examine clothing for tags or tight areas",
+                "Adjust room temperature",
+                "Try different holding positions"
+            ],
+            "belly pain": [
+                "Gently massage baby's tummy in circular motions",
+                "Try the 'bicycle' leg exercise",
+                "Hold baby upright for burping",
+                "Consider gas drops if recommended by pediatrician"
+            ],
+            cold_hot: [
+                "Check if baby feels too warm or cool to touch",
+                "Adjust clothing layers appropriately",
+                "Ensure room temperature is comfortable (68-72°F)",
+                "Check for signs of fever if baby feels warm"
+            ]
+        };
+
+        // Initialize charts
+        function initCharts() {
+            // History Chart
+            const historyCtx = document.getElementById('historyChart').getContext('2d');
+            historyChart = new Chart(historyCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Confidence Level',
+                        data: [],
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Distribution Chart
+            const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+            distributionChart = new Chart(distributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hungry', 'Tired', 'Discomfort', 'Belly Pain', 'Cold/Hot'],
+                    datasets: [{
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            '#ef4444',
+                            '#8b5cf6',
+                            '#06b6d4',
+                            '#f59e0b',
+                            '#10b981'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Add this to your JavaScript section
+        function loadModelStats() {
+            fetch('/model-stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('accuracyStat').textContent = `${Math.round(data.accuracy * 100)}%`;
+                    document.getElementById('latencyStat').textContent = `${data.avg_inference_time}ms`;
+                })
+                .catch(() => {
+                    document.getElementById('accuracyStat').textContent = 'N/A';
+                    document.getElementById('latencyStat').textContent = 'N/A';
+                });
+        }
+
+        // Event Listeners
+        browseButton.addEventListener('click', () => audioInput.click());
+
+        uploadZone.addEventListener('dragover', (e) => {
             e.preventDefault();
-            uploadArea.classList.add('dragover');
+            uploadZone.classList.add('dragover');
         });
 
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
         });
 
-        uploadArea.addEventListener('drop', (e) => {
+        uploadZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFile(files[0]);
+            uploadZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                uploadFile(e.dataTransfer.files[0]);
             }
         });
 
-        // File input change
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleFile(e.target.files[0]);
+        uploadZone.addEventListener('click', () => audioInput.click());
+
+        audioInput.addEventListener('change', () => {
+            if (audioInput.files.length) {
+                uploadFile(audioInput.files[0]);
             }
         });
 
-        // Handle file upload and prediction
-        function handleFile(file) {
-            // Validate file type
-            const allowedTypes = ['audio/wav', 'audio/mpeg', 'audio/flac', 'audio/mp4'];
-            if (!allowedTypes.includes(file.type) && !file.name.match(/\.(wav|mp3|flac|m4a)$/i)) {
-                alert('Please upload a valid audio file (WAV, MP3, FLAC, M4A)');
-                return;
-            }
-
-            // Validate file size (16MB)
-            if (file.size > 16 * 1024 * 1024) {
-                alert('File size too large. Maximum size is 16MB.');
-                return;
-            }
-
-            // Show loading
-            loadingSpinner.style.display = 'block';
-            resultsSection.style.display = 'none';
-
-            // Create form data
+        // Upload and analyze file
+        function uploadFile(file) {
             const formData = new FormData();
             formData.append('file', file);
 
-            // Upload and predict
+            // Show loading state
+            loadingOverlay.style.display = 'flex';
+            statusChip.style.display = 'inline-flex';
+            statusChip.className = 'status-chip processing';
+            statusChip.textContent = 'Processing';
+
+            // Reset progress
+            updateProgress(0);
+            resultValue.textContent = '—';
+            insightsList.innerHTML = '<li>Analyzing audio patterns...</li>';
+            probabilityBars.innerHTML = '<div style="text-align: center; color: var(--gray-500); padding: 1rem;">Processing...</div>';
+
             fetch('/upload', {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
-                loadingSpinner.style.display = 'none';
-                
-                if (data.success) {
-                    displayResults(data);
-                } else {
-                    alert('Error: ' + data.error);
+                loadingOverlay.style.display = 'none';
+
+                if (data.error) {
+                    statusChip.className = 'status-chip error';
+                    statusChip.textContent = 'Error';
+                    resultValue.textContent = 'Error';
+                    insightsList.innerHTML = '<li>Upload failed. Please try again with a valid audio file.</li>';
+                    probabilityBars.innerHTML = '<div style="text-align: center; color: var(--danger); padding: 1rem;">Analysis failed</div>';
+                    return;
                 }
+
+                // Update UI with results
+                statusChip.className = 'status-chip ready';
+                statusChip.textContent = 'Complete';
+
+                const confidence = Math.round(data.confidence * 100);
+                updateProgress(confidence);
+                resultValue.textContent = data.predicted_class.toUpperCase();
+
+                // Update insights
+                const insight = INSIGHTS[data.predicted_class] || "Review the recording context for next steps.";
+                insightsList.innerHTML = `<li>${insight}</li>`;
+
+                // Update probability bars
+                updateProbabilityBars(data.probabilities);
+
+                // Update tips
+                updateTips(data.predicted_class);
+
+                // Update charts
+                updateCharts(data);
+
+                // Add fade-in animation
+                document.getElementById('resultsCard').classList.add('fade-in');
             })
             .catch(error => {
-                loadingSpinner.style.display = 'none';
-                console.error('Error:', error);
-                alert('An error occurred while processing the file.');
+                loadingOverlay.style.display = 'none';
+                statusChip.className = 'status-chip error';
+                statusChip.textContent = 'Failed';
+                console.error('Upload error:', error);
             });
         }
 
-        // Display prediction results
-        function displayResults(data) {
-            document.getElementById('className').textContent = data.predicted_class;
-            document.getElementById('confidence').textContent = (data.confidence * 100).toFixed(1);
-            document.getElementById('chartImage').src = 'data:image/png;base64,' + data.chart;
+        // Update progress circle
+        function updateProgress(percentage) {
+            const circumference = 2 * Math.PI * 45;
+            const offset = circumference - (percentage / 100) * circumference;
+            progressFill.style.strokeDashoffset = offset;
+            progressText.textContent = percentage + '%';
+        }
 
-            // Create probability bars
-            const probabilityBars = document.getElementById('probabilityBars');
+        // Update probability bars
+        function updateProbabilityBars(probabilities) {
             probabilityBars.innerHTML = '';
-
-            Object.entries(data.probabilities).forEach(([className, probability]) => {
-                const barHtml = `
-                    <div class="mb-2">
-                        <div class="d-flex justify-content-between">
-                            <span><strong>${className}</strong></span>
-                            <span>${(probability * 100).toFixed(1)}%</span>
-                        </div>
-                        <div class="probability-bar">
-                            <div class="probability-fill" style="width: ${probability * 100}%"></div>
-                        </div>
+            
+            Object.entries(probabilities).forEach(([label, prob]) => {
+                const percentage = Math.round(prob * 100);
+                
+                const item = document.createElement('div');
+                item.className = 'probability-item';
+                item.innerHTML = `
+                    <div class="probability-label">${label}</div>
+                    <div class="probability-bar">
+                        <div class="probability-fill" style="width: ${percentage}%"></div>
                     </div>
+                    <div class="probability-value">${percentage}%</div>
                 `;
-                probabilityBars.innerHTML += barHtml;
+                
+                probabilityBars.appendChild(item);
             });
-
-            resultsSection.style.display = 'block';
-            resultsSection.scrollIntoView({ behavior: 'smooth' });
         }
+
+        // Update tips section
+        function updateTips(pattern) {
+            const tips = TIPS[pattern] || ["No specific tips available for this pattern."];
+            
+            tipsContent.innerHTML = `
+                <h4 style="margin-bottom: 1rem; color: var(--gray-700);">Recommended Actions for ${pattern.toUpperCase()}</h4>
+                <ul style="list-style: none; padding: 0;">
+                    ${tips.map(tip => `
+                        <li style="margin-bottom: 0.75rem; padding-left: 1.5rem; position: relative; color: var(--gray-600);">
+                            <i class="fas fa-check-circle" style="position: absolute; left: 0; top: 0.25rem; color: var(--success);"></i>
+                            ${tip}
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+        }
+
+        // Update charts with new data
+        function updateCharts(data) {
+            // Update history chart
+            const now = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            historyChart.data.labels.push(now);
+            historyChart.data.datasets[0].data.push(Math.round(data.confidence * 100));
+            
+            // Keep only last 10 data points
+            if (historyChart.data.labels.length > 10) {
+                historyChart.data.labels.shift();
+                historyChart.data.datasets[0].data.shift();
+            }
+            
+            historyChart.update();
+
+            // Update distribution chart
+            const probabilities = Object.values(data.probabilities).map(p => Math.round(p * 100));
+            distributionChart.data.datasets[0].data = probabilities;
+            distributionChart.update();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            loadModelStats();
+        });
     </script>
 </body>
 </html>

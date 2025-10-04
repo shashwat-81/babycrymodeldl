@@ -252,11 +252,6 @@ def upload_file():
     
     return jsonify({'error': 'Invalid file format. Please upload WAV, MP3, FLAC, or M4A files.'})
 
-@app.route('/demo')
-def demo():
-    """Demo page with sample predictions"""
-    return render_template('demo.html')
-
 @app.route('/about')
 def about():
     """About page with model information"""
@@ -276,6 +271,15 @@ def model_info():
     }
     
     return jsonify(info)
+
+# Add this to your Flask app (app.py or main.py)
+@app.route('/model-stats')
+def model_stats():
+    # Replace these with your actual model metrics
+    return {
+        'accuracy': 0.85,  # Replace with your actual accuracy (0.0-1.0)
+        'avg_inference_time': 180  # Replace with actual inference time in ms
+    }
 
 @app.errorhandler(413)
 def too_large(e):
