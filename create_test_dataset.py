@@ -31,7 +31,7 @@ def create_test_dataset():
     }
     
     # Number of samples per class for testing
-    samples_per_class = 5
+    samples_per_class = 10
     
     total_copied = 0
     

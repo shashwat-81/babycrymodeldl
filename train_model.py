@@ -49,7 +49,7 @@ def main():
         print("Processed data not found. Running preprocessing...")
         
         # Initialize preprocessor
-        preprocessor = AudioPreprocessor('Data')
+        preprocessor = AudioPreprocessor('Data/Correctly_Classified')
         
         # Load and process data
         audio_files, labels_encoded, labels = preprocessor.load_dataset(augment_data=True)
@@ -158,6 +158,10 @@ def main():
     
     # Save final evaluation results
     test_report, test_cm = trainer.evaluate_model(test_predictions, test_labels, label_encoder)
+    
+    # Get best validation accuracy from saved model checkpoint
+    checkpoint = torch.load('models/hybrid_model.pth')
+    best_val_acc = checkpoint.get('val_accuracy', 0.0)
     
     # Save evaluation results
     import json

@@ -2,12 +2,6 @@
 
 A hybrid deep learning model for classifying baby cries into 5 categories: belly pain, cold/hot, discomfort, hungry, and tired.
 
-## 🎯 Model Performance
-- **Test Accuracy**: 68.85% (improved from 30-40%)
-- **Model Size**: 692K parameters (optimized from 101M)
-- **GPU Optimized**: RTX 3050 compatible
-- **Inference Speed**: Real-time classification
-
 ## 🚀 Features
 
 - **Hybrid AI Model**: Statistical features + CNN + Traditional ML
@@ -21,7 +15,7 @@ A hybrid deep learning model for classifying baby cries into 5 categories: belly
 ## 📁 Project Structure
 
 ```
-Baby-Cry-Model/
+babycrymodeldl/
 ├── Data/                       # Dataset folder
 │   ├── belly pain/            # Belly pain cry samples
 │   ├── cold_hot/              # Cold/hot discomfort samples
@@ -37,8 +31,14 @@ Baby-Cry-Model/
 │   ├── app.py                 # Flask application
 │   ├── templates/             # HTML templates
 │   └── static/                # Static files
+├── test_dataset/              # Test samples for evaluation
 ├── requirements.txt           # Python dependencies
+├── setup.py                   # Environment setup script
 ├── train_model.py            # Main training script
+├── predict.py                # Comprehensive prediction script
+├── classify_audio.py         # Single file classification
+├── evaluate_model.py         # Model evaluation
+├── quick_test.py             # Basic functionality test
 └── README.md                 # This file
 ```
 
@@ -119,8 +119,7 @@ All features are combined through a fusion layer before final classification.
 
 1. **Start the Flask app**:
    ```bash
-   cd web_app
-   python app.py
+   python web_app/app.py
    ```
 
 2. **Open your browser** and go to `http://localhost:5000`
@@ -248,5 +247,3 @@ Feel free to contribute by:
 This project is for educational purposes. Please ensure proper attribution when using.
 
 ---
-
-*Built with ❤️ using PyTorch, Flask, and modern deep learning techniques*

@@ -133,12 +133,12 @@ class CryPredictor:
         if not audio_folder.exists():
             raise FileNotFoundError(f"Folder not found: {audio_folder}")
         
-        # Find audio files
+        # Find audio files (search recursively through subfolders)
         audio_extensions = ['.wav', '.mp3', '.flac', '.m4a']
         audio_files = []
         for ext in audio_extensions:
-            audio_files.extend(audio_folder.glob(f'*{ext}'))
-            audio_files.extend(audio_folder.glob(f'*{ext.upper()}'))
+            audio_files.extend(audio_folder.rglob(f'*{ext}'))
+            audio_files.extend(audio_folder.rglob(f'*{ext.upper()}'))
         
         if not audio_files:
             print(f"❌ No audio files found in {audio_folder}")

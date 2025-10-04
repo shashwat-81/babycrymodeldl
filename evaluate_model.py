@@ -74,8 +74,8 @@ def evaluate_model():
         spectral_dim=spectral_dim,
         rhythm_dim=rhythm_dim,
         spectrogram_shape=spectrogram_shape,
-        hidden_dim=256,
-        lstm_layers=2
+        hidden_dim=128,
+        lstm_layers=1
     )
     
     checkpoint = torch.load('models/hybrid_model.pth', map_location=device)

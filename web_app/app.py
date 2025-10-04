@@ -57,19 +57,35 @@ def load_model():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     try:
-        # Load label encoder
-        import pickle
-        with open('../models/label_encoder.pkl', 'rb') as f:
-            label_encoder = pickle.load(f)
+        # Load label encoder using joblib (consistent with training)
+        label_encoder = joblib.load('../models/label_encoder.pkl')
+        
+        # Load processed data to get feature dimensions
+        norm_data = np.load('../models/processed_data.npz')
+        
+        # Get feature dimensions from the saved data
+        mfcc_dim = norm_data['norm_mfcc_mean'].shape[0]
+        spectral_dim = norm_data['norm_spectral_mean'].shape[0] 
+        rhythm_dim = norm_data['norm_rhythm_mean'].shape[0]
         
         # Load model
         model_path = '../models/hybrid_model.pth'
         if os.path.exists(model_path):
-            # Create model instance
-            model = HybridCryClassifier()
+            # Get spectrogram shape from checkpoint or use default
+            checkpoint = torch.load(model_path, map_location=device)
+            
+            # Create model instance with correct parameters
+            model = HybridCryClassifier(
+                num_classes=len(label_encoder.classes_),
+                mfcc_dim=mfcc_dim,
+                spectral_dim=spectral_dim,
+                rhythm_dim=rhythm_dim,
+                spectrogram_shape=(128, 313),  # Default from training
+                hidden_dim=128,
+                lstm_layers=1
+            )
             
             # Load trained weights
-            checkpoint = torch.load(model_path, map_location=device)
             if 'model_state_dict' in checkpoint:
                 model.load_state_dict(checkpoint['model_state_dict'])
             else:
@@ -78,6 +94,8 @@ def load_model():
             model.eval()
             
             print("Model loaded successfully!")
+            print(f"Model classes: {label_encoder.classes_}")
+            print(f"Feature dimensions - MFCC: {mfcc_dim}, Spectral: {spectral_dim}, Rhythm: {rhythm_dim}")
             return True
         else:
             print("Model file not found!")
@@ -85,6 +103,8 @@ def load_model():
             
     except Exception as e:
         print(f"Error loading model: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def preprocess_audio_file(file_path):

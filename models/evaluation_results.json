@@ -1,49 +1,56 @@
 {
-  "test_accuracy": 68.84816753926701,
+  "test_accuracy": 74.60732984293193,
   "test_report": {
     "belly pain": {
-      "precision": 0.8278145695364238,
-      "recall": 0.8169934640522876,
-      "f1-score": 0.8223684210526315,
+      "precision": 0.8589743589743589,
+      "recall": 0.8758169934640523,
+      "f1-score": 0.8673139158576052,
       "support": 153.0
     },
     "cold_hot": {
-      "precision": 0.7987421383647799,
-      "recall": 0.8355263157894737,
-      "f1-score": 0.8167202572347267,
+      "precision": 0.7848101265822784,
+      "recall": 0.8157894736842105,
+      "f1-score": 0.8,
       "support": 152.0
     },
     "discomfort": {
-      "precision": 0.6761363636363636,
-      "recall": 0.7777777777777778,
-      "f1-score": 0.723404255319149,
+      "precision": 0.82,
+      "recall": 0.803921568627451,
+      "f1-score": 0.8118811881188119,
       "support": 153.0
     },
     "hungry": {
-      "precision": 0.32075471698113206,
-      "recall": 0.2222222222222222,
-      "f1-score": 0.2625482625482625,
+      "precision": 0.44776119402985076,
+      "recall": 0.39215686274509803,
+      "f1-score": 0.4181184668989547,
       "support": 153.0
     },
     "tired": {
-      "precision": 0.7034883720930233,
-      "recall": 0.7908496732026143,
-      "f1-score": 0.7446153846153846,
+      "precision": 0.7771084337349398,
+      "recall": 0.8431372549019608,
+      "f1-score": 0.8087774294670846,
       "support": 153.0
     },
-    "accuracy": 0.6884816753926701,
+    "accuracy": 0.7460732984293194,
     "macro avg": {
-      "precision": 0.6653872321223446,
-      "recall": 0.6886738906088751,
-      "f1-score": 0.6739313161540308,
+      "precision": 0.7377308226642855,
+      "recall": 0.7461644306845546,
+      "f1-score": 0.7412182000684914,
       "support": 764.0
     },
     "weighted avg": {
-      "precision": 0.6652126838157445,
-      "recall": 0.6884816753926701,
-      "f1-score": 0.6737444196342918,
+      "precision": 0.7376692005387384,
+      "recall": 0.7460732984293194,
+      "f1-score": 0.7411412605397851,
       "support": 764.0
     }
   },
-  "validation_accuracy": [
-    
+  "validation_accuracy": 78.79581151832461,
+  "class_names": [
+    "belly pain",
+    "cold_hot",
+    "discomfort",
+    "hungry",
+    "tired"
+  ]
+}

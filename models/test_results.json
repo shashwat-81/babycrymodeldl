@@ -1,0 +1,170 @@
+[
+  {
+    "file": "belly_pain_sample_01.wav",
+    "true_label": "belly pain",
+    "predicted": "hungry",
+    "confidence": 0.669512152671814,
+    "correct": false
+  },
+  {
+    "file": "belly_pain_sample_02.wav",
+    "true_label": "belly pain",
+    "predicted": "hungry",
+    "confidence": 0.6297876834869385,
+    "correct": false
+  },
+  {
+    "file": "belly_pain_sample_03.wav",
+    "true_label": "belly pain",
+    "predicted": "hungry",
+    "confidence": 0.6919772624969482,
+    "correct": false
+  },
+  {
+    "file": "belly_pain_sample_04.wav",
+    "true_label": "belly pain",
+    "predicted": "hungry",
+    "confidence": 0.6779988408088684,
+    "correct": false
+  },
+  {
+    "file": "belly_pain_sample_05.wav",
+    "true_label": "belly pain",
+    "predicted": "hungry",
+    "confidence": 0.6327900886535645,
+    "correct": false
+  },
+  {
+    "file": "cold_hot_sample_01.wav",
+    "true_label": "cold_hot",
+    "predicted": "hungry",
+    "confidence": 0.6432050466537476,
+    "correct": false
+  },
+  {
+    "file": "cold_hot_sample_02.wav",
+    "true_label": "cold_hot",
+    "predicted": "hungry",
+    "confidence": 0.6704313158988953,
+    "correct": false
+  },
+  {
+    "file": "cold_hot_sample_03.wav",
+    "true_label": "cold_hot",
+    "predicted": "hungry",
+    "confidence": 0.6575107574462891,
+    "correct": false
+  },
+  {
+    "file": "cold_hot_sample_04.wav",
+    "true_label": "cold_hot",
+    "predicted": "hungry",
+    "confidence": 0.5695602893829346,
+    "correct": false
+  },
+  {
+    "file": "cold_hot_sample_05.wav",
+    "true_label": "cold_hot",
+    "predicted": "hungry",
+    "confidence": 0.6268261671066284,
+    "correct": false
+  },
+  {
+    "file": "discomfort_sample_01.wav",
+    "true_label": "discomfort",
+    "predicted": "hungry",
+    "confidence": 0.6618883013725281,
+    "correct": false
+  },
+  {
+    "file": "discomfort_sample_02.wav",
+    "true_label": "discomfort",
+    "predicted": "hungry",
+    "confidence": 0.6574841141700745,
+    "correct": false
+  },
+  {
+    "file": "discomfort_sample_03.wav",
+    "true_label": "discomfort",
+    "predicted": "hungry",
+    "confidence": 0.6675394773483276,
+    "correct": false
+  },
+  {
+    "file": "discomfort_sample_04.wav",
+    "true_label": "discomfort",
+    "predicted": "hungry",
+    "confidence": 0.6827305555343628,
+    "correct": false
+  },
+  {
+    "file": "discomfort_sample_05.wav",
+    "true_label": "discomfort",
+    "predicted": "hungry",
+    "confidence": 0.6541237235069275,
+    "correct": false
+  },
+  {
+    "file": "hungry_sample_01.wav",
+    "true_label": "hungry",
+    "predicted": "hungry",
+    "confidence": 0.6369590759277344,
+    "correct": true
+  },
+  {
+    "file": "hungry_sample_02.wav",
+    "true_label": "hungry",
+    "predicted": "hungry",
+    "confidence": 0.6506349444389343,
+    "correct": true
+  },
+  {
+    "file": "hungry_sample_03.wav",
+    "true_label": "hungry",
+    "predicted": "hungry",
+    "confidence": 0.6574674844741821,
+    "correct": true
+  },
+  {
+    "file": "hungry_sample_04.wav",
+    "true_label": "hungry",
+    "predicted": "hungry",
+    "confidence": 0.667854368686676,
+    "correct": true
+  },
+  {
+    "file": "hungry_sample_05.wav",
+    "true_label": "hungry",
+    "predicted": "hungry",
+    "confidence": 0.6251499652862549,
+    "correct": true
+  },
+  {
+    "file": "tired_sample_02.wav",
+    "true_label": "tired",
+    "predicted": "hungry",
+    "confidence": 0.6756911873817444,
+    "correct": false
+  },
+  {
+    "file": "tired_sample_03.wav",
+    "true_label": "tired",
+    "predicted": "hungry",
+    "confidence": 0.6456597447395325,
+    "correct": false
+  },
+  {
+    "file": "tired_sample_04.wav",
+    "true_label": "tired",
+    "predicted": "hungry",
+    "confidence": 0.6287854313850403,
+    "correct": false
+  },
+  {
+    "file": "tired_sample_05.wav",
+    "true_label": "tired",
+    "predicted": "hungry",
+    "confidence": 0.6219362616539001,
+    "correct": false
+  }
+]

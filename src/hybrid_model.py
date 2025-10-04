@@ -83,7 +83,8 @@ class CNNFeatureExtractor(nn.Module):
 
 class HybridCryClassifier(nn.Module):
     def __init__(self, num_classes=5, mfcc_dim=156, spectral_dim=20, rhythm_dim=4, 
-                 spectrogram_shape=(128, 313), hidden_dim=128, lstm_layers=1):
+                 spectrogram_shape=(128, 313), hidden_dim=128, lstm_layers=1,
+                 wav2vec_model_name="facebook/wav2vec2-base"):
         super(HybridCryClassifier, self).__init__()
         
         self.num_classes = num_classes
@@ -145,9 +146,22 @@ class HybridCryClassifier(nn.Module):
             nn.Dropout(0.2),
             nn.Linear(32, 16)
         )
+
+        # Wav2Vec2 feature extractor + BiLSTM + Attention (new)
+        self.wav2vec_extractor = Wav2VecFeatureExtractor(model_name=wav2vec_model_name)
+        w2v_hidden_size = self.wav2vec_extractor.wav2vec2.config.hidden_size
+        self.bilstm = nn.LSTM(
+            input_size=w2v_hidden_size,
+            hidden_size=hidden_dim,
+            num_layers=lstm_layers,
+            batch_first=True,
+            bidirectional=True
+        )
+        self.attention_w2v = AttentionMechanism(hidden_dim * 2)
         
         # Feature fusion with better architecture
-        fusion_dim = cnn_output_dim + 32 + 8 + 4 + 16  # All features combined
+        # Added attended wav2vec feature dimension: hidden_dim * 2
+        fusion_dim = cnn_output_dim + 32 + 8 + 4 + 16 + (hidden_dim * 2)
         
         self.fusion_layer = nn.Sequential(
             nn.LayerNorm(fusion_dim),
@@ -168,7 +182,14 @@ class HybridCryClassifier(nn.Module):
     def forward(self, raw_audio, spectrograms, mfcc_features, spectral_features, rhythm_features):
         batch_size = raw_audio.size(0)
         
-        # 1. Extract statistical features from raw audio (much simpler than Wav2Vec)
+        # 1. Extract Wav2Vec2 features, then BiLSTM + Attention
+        # raw_audio expected shape: (batch_size, audio_length)
+        with torch.no_grad():
+            w2v_seq = self.wav2vec_extractor(raw_audio)  # (batch, seq_len, w2v_hidden)
+        lstm_out, _ = self.bilstm(w2v_seq)  # (batch, seq_len, hidden_dim*2)
+        attended_w2v, attention_weights = self.attention_w2v(lstm_out)  # (batch, hidden_dim*2)
+
+        # 2. Extract statistical features from raw audio
         audio_stats = torch.stack([
             torch.mean(raw_audio, dim=1),
             torch.std(raw_audio, dim=1),
@@ -182,19 +203,20 @@ class HybridCryClassifier(nn.Module):
         
         audio_processed = self.audio_processor(audio_stats)
         
-        # 2. CNN processing for spectrograms
+        # 3. CNN processing for spectrograms
         if len(spectrograms.shape) == 3:
             spectrograms = spectrograms.unsqueeze(1)
         cnn_features = self.cnn_extractor(spectrograms)
         cnn_features = cnn_features.view(batch_size, -1)
         
-        # 3. Traditional feature processing
+        # 4. Traditional feature processing
         mfcc_processed = self.mfcc_processor(mfcc_features)
         spectral_processed = self.spectral_processor(spectral_features)
         rhythm_processed = self.rhythm_processor(rhythm_features)
         
-        # 4. Feature fusion
+        # 5. Feature fusion
         fused_features = torch.cat([
+            attended_w2v,
             audio_processed,
             cnn_features,
             mfcc_processed,
@@ -202,11 +224,11 @@ class HybridCryClassifier(nn.Module):
             rhythm_processed
         ], dim=1)
         
-        # 5. Final processing
+        # 6. Final processing
         processed_features = self.fusion_layer(fused_features)
         output = self.classifier(processed_features)
         
-        return output, None  # No attention weights in this simplified version
+        return output, attention_weights
 
 class EnsembleClassifier(nn.Module):
     def __init__(self, num_classes=5, num_models=3):
