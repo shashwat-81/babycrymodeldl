@@ -306,6 +306,10 @@ def model_stats():
         'avg_inference_time': 180  # Replace with actual inference time in ms
     }
 
+@app.route('/live-data')
+def live_data():
+    return render_template('live_data.html')
+
 @app.errorhandler(413)
 def too_large(e):
     return jsonify({'error': 'File too large. Maximum size is 16MB.'}), 413

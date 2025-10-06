@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Live Health Data</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #f8f9fa; margin: 0; }
+    .container { max-width: 100%; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+    .stats-grid { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;}
+    .stat-card { background: #f1f3f6; border-radius: 6px; padding: 1rem 1.25rem; flex: 1; min-width: 140px; text-align: center;}
+    .stat-label { font-size: 0.95rem; color: #555; margin-bottom: 0.35rem;}
+    .stat-value { font-size: 1.6rem; font-weight: 700; color: #222;}
+    .card-header { margin: 1rem 0; }
+    h2 { margin: 0; font-size: 1.4rem; }
+    .graph-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .graph-card { background: #f1f3f6; border-radius: 6px; padding: 1rem; text-align: center; }
+    .stat-unit { font-size: .9rem; color:#666; margin-left:.25rem; }
+    @media (max-width: 100%){ .graph-grid{ grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card-header">
+      <h2>Live Health Data</h2>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">BPM</div>
+        <div class="stat-value"><span id="liveBpm">--</span> bpm</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">SpO₂</div>
+        <div class="stat-value"><span id="liveSpo2">--</span> %</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Ambient Temp</div>
+        <div class="stat-value"><span id="liveTa">--</span> °C</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Object Temp</div>
+        <div class="stat-value"><span id="liveTo">--</span> °C</div>
+      </div>
+    </div>
+
+    <div class="card-header">
+      <h2>Live Data Graphs</h2>
+    </div>
+
+    <div class="graph-grid">
+      <div class="graph-card">
+        <div class="stat-label">BPM</div>
+        <canvas id="bpmChart" width="300" height="200"></canvas>
+      </div>
+      <div class="graph-card">
+        <div class="stat-label">SpO₂</div>
+        <canvas id="spo2Chart" width="300" height="200"></canvas>
+      </div>
+      <div class="graph-card">
+        <div class="stat-label">Ambient Temp (°C)</div>
+        <canvas id="taChart" width="300" height="200"></canvas>
+      </div>
+      <div class="graph-card">
+        <div class="stat-label">Object Temp (°C)</div>
+        <canvas id="toChart" width="300" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const MAX_POINTS = 30;
+    let labels = [];
+    let bpmData = [], spo2Data = [], taData = [], toData = [];
+
+    // Initialize charts
+    const bpmChart = new Chart(document.getElementById('bpmChart').getContext('2d'), {
+        type: 'line',
+        data: { labels, datasets: [{ label: 'BPM', data: bpmData, borderColor: 'rgb(255,99,132)', fill: false }] },
+        options: { animation: false, scales: { x: { display: false }, y: { beginAtZero: true } } }
+    });
+    const spo2Chart = new Chart(document.getElementById('spo2Chart').getContext('2d'), {
+        type: 'line',
+        data: { labels, datasets: [{ label: 'SpO₂', data: spo2Data, borderColor: 'rgb(54,162,235)', fill: false }] },
+        options: { animation: false, scales: { x: { display: false }, y: { beginAtZero: true } } }
+    });
+    const taChart = new Chart(document.getElementById('taChart').getContext('2d'), {
+        type: 'line',
+        data: { labels, datasets: [{ label: 'Ambient Temp', data: taData, borderColor: 'rgb(255,206,86)', fill: false }] },
+        options: { animation: false, scales: { x: { display: false }, y: { beginAtZero: true } } }
+    });
+    const toChart = new Chart(document.getElementById('toChart').getContext('2d'), {
+        type: 'line',
+        data: { labels, datasets: [{ label: 'Object Temp', data: toData, borderColor: 'rgb(75,192,192)', fill: false }] },
+        options: { animation: false, scales: { x: { display: false }, y: { beginAtZero: true } } }
+    });
+
+    function pollLiveHealthData() {
+        fetch('/live-health-data')
+            .then(res => res.json())
+            .then(data => {
+                // Update stats
+                document.getElementById('liveBpm').textContent = data.bpm ?? '--';
+                document.getElementById('liveSpo2').textContent = data.spo2 ?? '--';
+                document.getElementById('liveTa').textContent = data.ta ?? '--';
+                document.getElementById('liveTo').textContent = data.to ?? '--';
+
+                // Update graphs
+                const now = new Date().toLocaleTimeString();
+                labels.push(now);
+                bpmData.push(data.bpm === '--' || data.bpm === null ? null : Number(data.bpm));
+                spo2Data.push(data.spo2 === '--' || data.spo2 === null ? null : Number(data.spo2));
+                taData.push(data.ta === '--' || data.ta === null ? null : Number(data.ta));
+                toData.push(data.to === '--' || data.to === null ? null : Number(data.to));
+                if (labels.length > MAX_POINTS) {
+                    labels.shift(); bpmData.shift(); spo2Data.shift(); taData.shift(); toData.shift();
+                }
+                bpmChart.update(); spo2Chart.update(); taChart.update(); toChart.update();
+            });
+    }
+    setInterval(pollLiveHealthData, 2000);
+    pollLiveHealthData();
+});
+  </script>
+</body>
+</html>
