@@ -7,6 +7,9 @@ import os
 import sys
 import io
 import base64
+import serial
+import json
+from flask import jsonify
 
 # Set matplotlib backend before importing pyplot to avoid tkinter issues
 import matplotlib
@@ -272,6 +275,28 @@ def model_info():
     
     return jsonify(info)
 
+@app.route('/live-health-data')
+def live_health_data():
+    try:
+        ser = serial.Serial('COM3', 115200, timeout=2)
+        line = ser.readline().decode().strip()
+        ser.close()
+        data = json.loads(line)
+        # Replace nulls with '--'
+        for key in ['bpm', 'spo2', 'ta', 'to']:
+            if data.get(key) is None:
+                data[key] = '--'
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({
+            'bpm': '--',
+            'spo2': '--',
+            'ta': '--',
+            'to': '--',
+            'finger': False,
+            'error': str(e)
+        })
+
 # Add this to your Flask app (app.py or main.py)
 @app.route('/model-stats')
 def model_stats():
@@ -295,7 +320,7 @@ if __name__ == '__main__':
     # Load model
     if load_model():
         print("Model loaded successfully!")
-        app.run(debug=True, host='0.0.0.0', port=5000)
+        app.run(debug=False)
     else:
         print("Failed to load model. Please ensure the model is trained and saved.")
         print("Run train_model.py first to train the model.")
