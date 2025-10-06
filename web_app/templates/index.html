@@ -559,6 +559,19 @@
 
     <!-- Header -->
     <header class="header">
+        <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-card">
+            <div class="loading-spinner"></div>
+            <h3 style="margin-bottom: 0.5rem;">Analyzing Audio</h3>
+            <p style="color: var(--gray-500); margin: 0;">Processing your baby's cry pattern...</p>
+            <div class="loading-dots">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+            </div>
+        </div>
+    </div>
+        
         <div class="nav-container">
             <nav class="navbar">
                 <div class="brand">
@@ -579,16 +592,26 @@
                 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-value" id="accuracyStat">--</div>
-                        <div class="stat-label">Accuracy Rate</div>
+                        <div class="stat-label">BPM</div>
+                        <div class="stat-value" id="liveBpm">--</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value">5</div>
-                        <div class="stat-label">Cry Categories</div>
+                        <div class="stat-label">SpO₂</div>
+                        <div class="stat-value" id="liveSpo2">--</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-value" id="latencyStat">--</div>
-                        <div class="stat-label">Analysis Time</div>
+                        <div class="stat-label">Ambient Temp</div>
+                        <div class="stat-value" id="liveTa">--</div>
+                        <span>°C</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Object Temp</div>
+                        <div class="stat-value" id="liveTo">--</div>
+                        <span>°C</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Finger Detected</div>
+                        <div class="stat-value" id="liveFinger">No</div>
                     </div>
                 </div>
             </div>
@@ -653,20 +676,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Live Health Data Card -->
-        <div class="card" id="liveHealthCard" style="margin-bottom:2rem;">
-            <div class="card-header">
-                <h2 class="card-title">Live Health Data (from Arduino)</h2>
-            </div>
-            <div id="liveHealthStats">
-                <div><strong>BPM:</strong> <span id="liveBpm">--</span></div>
-                <div><strong>SpO₂:</strong> <span id="liveSpo2">--</span></div>
-                <div><strong>Ambient Temp:</strong> <span id="liveTa">--</span> °C</div>
-                <div><strong>Object Temp:</strong> <span id="liveTo">--</span> °C</div>
-                <div><strong>Finger Detected:</strong> <span id="liveFinger">--</span></div>
             </div>
         </div>
 
@@ -853,28 +862,26 @@
         }
 
         // Poll live health data
-        function pollLiveHealthData() {
-            fetch('/live-health-data')
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById('liveBpm').textContent = data.bpm ?? '--';
-                    document.getElementById('liveSpo2').textContent = data.spo2 ?? '--';
-                    document.getElementById('liveTa').textContent = data.ta ?? '--';
-                    document.getElementById('liveTo').textContent = data.to ?? '--';
-                    document.getElementById('liveFinger').textContent = data.finger ? 'Yes' : 'No';
-                })
-                .catch(() => {
-                    document.getElementById('liveBpm').textContent = '--';
-                    document.getElementById('liveSpo2').textContent = '--';
-                    document.getElementById('liveTa').textContent = '--';
-                    document.getElementById('liveTo').textContent = '--';
-                    document.getElementById('liveFinger').textContent = '--';
-                });
-        }
-
-        // Start polling live health data every 2 seconds
-        setInterval(pollLiveHealthData, 2000);
-        document.addEventListener('DOMContentLoaded', pollLiveHealthData);
+function pollLiveHealthData() {
+    fetch('/live-health-data')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('liveBpm').textContent = data.bpm ?? '--';
+            document.getElementById('liveSpo2').textContent = data.spo2 ?? '--';
+            document.getElementById('liveTa').textContent = data.ta ?? '--';
+            document.getElementById('liveTo').textContent = data.to ?? '--';
+            document.getElementById('liveFinger').textContent = data.finger ? 'Yes' : 'No';
+        })
+        .catch(() => {
+            document.getElementById('liveBpm').textContent = '--';
+            document.getElementById('liveSpo2').textContent = '--';
+            document.getElementById('liveTa').textContent = '--';
+            document.getElementById('liveTo').textContent = '--';
+            document.getElementById('liveFinger').textContent = 'No';
+        });
+}
+setInterval(pollLiveHealthData, 2000);
+document.addEventListener('DOMContentLoaded', pollLiveHealthData);
 
         // Event Listeners
         browseButton.addEventListener('click', () => audioInput.click());

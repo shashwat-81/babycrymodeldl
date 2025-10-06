@@ -27,7 +27,7 @@ const byte FIFO_AVG     = 8;
 const int  SAMPLE_RATE  = 25;
 const int  PULSE_WIDTH  = 118;
 const int  SAT_IR       = 250000;
-const int  AC_MIN       = 50; // Try 100 or even 50
+const int  AC_MIN       = 100; // Try 100 or even 50
 const int  WINDOW       = 64;
 
 const int  BPM_MIN      = 40;
