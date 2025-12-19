@@ -10,6 +10,12 @@ import base64
 import serial
 import json
 from flask import jsonify
+from twilio.rest import Client
+import time
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Set matplotlib backend before importing pyplot to avoid tkinter issues
 import matplotlib
@@ -52,6 +58,16 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 model = None
 label_encoder = None
 device = None
+
+# Twilio configuration - loaded from environment variables
+TWILIO_SID = os.getenv('TWILIO_SID')
+TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
+TWILIO_FROM = os.getenv('TWILIO_FROM')  # Your Twilio number
+TWILIO_TO = os.getenv('TWILIO_TO')  # Recipient's phone number
+
+client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN) if TWILIO_SID and TWILIO_AUTH_TOKEN else None
+
+last_sms_sent = 5 # To avoid spamming
 
 def load_model():
     """Load the trained model and necessary components"""
@@ -277,23 +293,42 @@ def model_info():
 
 @app.route('/live-health-data')
 def live_health_data():
+    global last_sms_sent
     try:
         ser = serial.Serial('COM3', 115200, timeout=2)
         line = ser.readline().decode().strip()
         ser.close()
         data = json.loads(line)
-        # Replace nulls with '--'
-        for key in ['bpm', 'spo2', 'ta', 'to']:
-            if data.get(key) is None:
-                data[key] = '--'
-        return jsonify(data)
-    except Exception as e:
+        # Map Arduino JSON to expected keys
+        ta = data.get('ta_c', '--')
+        to = data.get('to_c', '--')
+        # Temperature alert logic
+        try:
+            temp_val = float(to)
+        except (TypeError, ValueError):
+            temp_val = 0
+        print("Parsed object temp:", temp_val)
+        if temp_val > 37.5 and time.time() - last_sms_sent > 300:
+            print("Sending SMS...")
+            try:
+                message = client.messages.create(
+                    body=f"Alert: Baby's temperature is high ({temp_val}°C)!",
+                    from_=TWILIO_FROM,
+                    to=TWILIO_TO
+                )
+                print("SMS sent! SID:", message.sid)
+                last_sms_sent = time.time()
+            except Exception as sms_err:
+                print("Twilio error:", sms_err)
         return jsonify({
-            'bpm': '--',
-            'spo2': '--',
+            'ta': ta,
+            'to': to
+        })
+    except Exception as e:
+        print("Route error:", e)
+        return jsonify({
             'ta': '--',
             'to': '--',
-            'finger': False,
             'error': str(e)
         })
 
@@ -324,7 +359,7 @@ if __name__ == '__main__':
     # Load model
     if load_model():
         print("Model loaded successfully!")
-        app.run(debug=False)
+        app.run(debug=True)
     else:
         print("Failed to load model. Please ensure the model is trained and saved.")
         print("Run train_model.py first to train the model.")
